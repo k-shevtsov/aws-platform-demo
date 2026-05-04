@@ -24,6 +24,11 @@ output "ssh_command" {
 }
 
 output "kubeconfig_command" {
-  description = "Command to get kubeconfig from EC2"
-  value       = "ssh -i ~/.ssh/${var.project_name}.pem ubuntu@${module.ec2.public_ip} 'sudo cat /etc/rancher/k3s/k3s.yaml'"
+  description = "Command to get kubeconfig from EC2 (uses static Elastic IP)"
+  value       = "ssh -i ~/.ssh/${var.project_name}.pem ubuntu@${module.vpc.elastic_ip} 'sudo cat /etc/rancher/k3s/k3s.yaml' | sed 's/127.0.0.1/${module.vpc.elastic_ip}/'"
+}
+
+output "elastic_ip" {
+  description = "Static Elastic IP (survives EC2 recreation)"
+  value       = module.vpc.elastic_ip
 }

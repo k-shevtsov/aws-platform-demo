@@ -10,3 +10,7 @@ variable "aws_region" {
   type    = string
   default = "eu-central-1"
 }
+variable "elastic_ip_id" {
+  description = "Elastic IP allocation ID"
+  type        = string
+}

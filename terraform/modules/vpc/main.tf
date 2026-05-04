@@ -123,3 +123,14 @@ resource "aws_security_group" "main" {
     ManagedBy   = "terraform"
   }
 }
+
+# Elastic IP — static public IP that survives EC2 recreation
+resource "aws_eip" "main" {
+  domain = "vpc"
+
+  tags = {
+    Name        = "${var.project_name}-eip"
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}

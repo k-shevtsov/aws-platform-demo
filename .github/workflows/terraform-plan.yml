@@ -9,6 +9,7 @@ on:
     branches: [main]
     paths:
       - 'terraform/**'
+  workflow_dispatch:
 
 jobs:
   plan:
@@ -44,9 +45,9 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -no-color -out=tfplan
-        continue-on-error: true
         id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
 
       - name: Comment PR with Plan
         if: github.event_name == 'pull_request'

@@ -48,4 +48,5 @@ module "ec2" {
   instance_profile  = module.iam.instance_profile_name
   ssh_allowed_cidr  = var.ssh_allowed_cidr
   ecr_registry_url  = module.ecr.registry_url
+  elastic_ip_id     = module.vpc.elastic_ip_id
 }

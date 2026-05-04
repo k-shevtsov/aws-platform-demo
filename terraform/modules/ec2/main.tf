@@ -43,6 +43,7 @@ resource "aws_instance" "main" {
     ecr_registry_url = var.ecr_registry_url
     aws_region       = var.aws_region
     project_name     = var.project_name
+    elastic_ip       = var.elastic_ip
   }))
 
   tags = {
@@ -51,4 +52,10 @@ resource "aws_instance" "main" {
     ManagedBy   = "terraform"
     Role        = "k3s-server"
   }
+}
+
+# Associate Elastic IP with EC2
+resource "aws_eip_association" "main" {
+  instance_id   = aws_instance.main.id
+  allocation_id = var.elastic_ip_id
 }
