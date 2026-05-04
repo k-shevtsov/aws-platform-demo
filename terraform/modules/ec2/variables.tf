@@ -18,3 +18,7 @@ variable "elastic_ip" {
   description = "Elastic IP address for TLS SAN"
   type        = string
 }
+variable "ssh_public_key" {
+  description = "SSH public key content for EC2 key pair"
+  type        = string
+}

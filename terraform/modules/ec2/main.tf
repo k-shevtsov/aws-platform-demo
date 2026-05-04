@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 # SSH Key Pair
 resource "aws_key_pair" "main" {
   key_name   = var.project_name
-  public_key = file("~/.ssh/${var.project_name}.pub")
+  public_key = var.ssh_public_key
 
   tags = {
     Name      = var.project_name

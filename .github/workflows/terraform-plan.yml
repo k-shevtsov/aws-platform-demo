@@ -20,6 +20,9 @@ jobs:
       contents: read
       pull-requests: write
 
+    env:
+      TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 

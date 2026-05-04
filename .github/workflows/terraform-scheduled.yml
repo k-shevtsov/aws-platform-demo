@@ -21,6 +21,9 @@ jobs:
     name: Terraform ${{ github.event.inputs.action || (github.event.schedule == '0 22 * * *' && 'destroy' || 'apply') }}
     runs-on: ubuntu-latest
 
+    env:
+      TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 

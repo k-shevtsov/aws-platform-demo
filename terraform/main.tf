@@ -50,4 +50,5 @@ module "ec2" {
   ecr_registry_url  = module.ecr.registry_url
   elastic_ip_id     = module.vpc.elastic_ip_id
   elastic_ip        = module.vpc.elastic_ip
+  ssh_public_key    = var.ssh_public_key
 }
