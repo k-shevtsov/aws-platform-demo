@@ -11,6 +11,8 @@
 A cloud platform demo that provisions production-grade AWS infrastructure from scratch using Terraform modules, deploys a Kubernetes cluster (k3s) on EC2 Free Tier, and runs a containerized application pulled from ECR.
 
 ## Architecture
+
+```
 Terraform (local) → AWS eu-central-1
 ├── VPC (10.0.0.0/16)
 │   ├── Public Subnet (10.0.1.0/24)
@@ -26,6 +28,7 @@ Terraform (local) → AWS eu-central-1
 ├── Ubuntu 24.04 LTS
 ├── k3s v1.35.4
 └── demo-app:v1.0.0 ← pulled from ECR
+```
 
 ## Stack
 
