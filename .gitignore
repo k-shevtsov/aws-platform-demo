@@ -1,0 +1,9 @@
+.env
+*.tfvars
+!example.tfvars
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.pem
+PROJECT_STATE.md
