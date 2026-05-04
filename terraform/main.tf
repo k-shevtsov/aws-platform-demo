@@ -49,4 +49,5 @@ module "ec2" {
   ssh_allowed_cidr  = var.ssh_allowed_cidr
   ecr_registry_url  = module.ecr.registry_url
   elastic_ip_id     = module.vpc.elastic_ip_id
+  elastic_ip        = module.vpc.elastic_ip
 }

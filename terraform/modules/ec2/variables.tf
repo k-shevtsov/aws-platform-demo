@@ -14,3 +14,7 @@ variable "elastic_ip_id" {
   description = "Elastic IP allocation ID"
   type        = string
 }
+variable "elastic_ip" {
+  description = "Elastic IP address for TLS SAN"
+  type        = string
+}
