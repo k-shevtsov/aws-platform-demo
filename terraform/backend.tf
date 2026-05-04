@@ -3,6 +3,5 @@ terraform {
     bucket  = "aws-platform-demo-tfstate-658424926455"
     key     = "terraform.tfstate"
     region  = "eu-central-1"
-    profile = "terraform-admin"
   }
 }

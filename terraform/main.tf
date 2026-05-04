@@ -10,7 +10,7 @@ terraform {
 
 provider "aws" {
   region  = var.aws_region
-  profile = "terraform-admin"
+  # profile used locally only — CI uses AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY env vars
 }
 
 # ── VPC ─────────────────────────────────────────
