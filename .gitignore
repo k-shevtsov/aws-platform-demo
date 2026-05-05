@@ -8,3 +8,4 @@ terraform.tfstate.backup
 *.pem
 PROJECT_STATE.md
 terraform/tfplan
+.env
