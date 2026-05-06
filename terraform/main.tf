@@ -52,3 +52,21 @@ module "ec2" {
   elastic_ip        = module.vpc.elastic_ip
   ssh_public_key    = var.ssh_public_key
 }
+
+# DynamoDB table for Terraform state locking
+resource "aws_dynamodb_table" "terraform_lock" {
+  name         = "${var.project_name}-tfstate-lock"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = {
+    Name        = "${var.project_name}-tfstate-lock"
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
