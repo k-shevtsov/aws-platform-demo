@@ -2,9 +2,7 @@ name: Terraform Scheduled Management
 
 on:
   schedule:
-    # Destroy every day at 22:00 UTC (midnight CE(S)T)
     - cron: '0 22 * * *'
-    # Apply every day at 07:00 UTC (9:00 CE(S)T)
     - cron: '0 7 * * 1-5'
   workflow_dispatch:
     inputs:
@@ -21,23 +19,26 @@ jobs:
     name: Terraform ${{ github.event.inputs.action || (github.event.schedule == '0 22 * * *' && 'destroy' || 'apply') }}
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      id-token: write  # required for OIDC
+
     env:
       TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::658424926455:role/aws-platform-demo-github-actions-role
+          aws-region: eu-central-1
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.10.0"
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
 
       - name: Terraform Init
         working-directory: terraform

@@ -70,3 +70,11 @@ resource "aws_dynamodb_table" "terraform_lock" {
     ManagedBy   = "terraform"
   }
 }
+
+# ── GitHub Actions OIDC ──────────────────────────────────────
+module "oidc" {
+  source       = "./modules/oidc"
+  project_name = var.project_name
+  github_org   = "k-shevtsov"
+  github_repo  = "aws-platform-demo"
+}

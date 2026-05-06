@@ -32,3 +32,8 @@ output "elastic_ip" {
   description = "Static Elastic IP (survives EC2 recreation)"
   value       = module.vpc.elastic_ip
 }
+
+output "github_actions_role_arn" {
+  description = "IAM Role ARN for GitHub Actions OIDC"
+  value       = module.oidc.role_arn
+}
