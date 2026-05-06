@@ -115,7 +115,16 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
           "logs:PutRetentionPolicy",
           "logs:TagLogGroup",
           "logs:TagResource",
-          "logs:ListTagsForResource"
+          "logs:ListTagsForResource",
+          # Secrets Manager
+          "secretsmanager:CreateSecret",
+          "secretsmanager:DeleteSecret",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:ListSecrets",
+          "secretsmanager:PutSecretValue",
+          "secretsmanager:TagResource",
+          "secretsmanager:GetResourcePolicy"
         ]
         Resource = "*"
       }

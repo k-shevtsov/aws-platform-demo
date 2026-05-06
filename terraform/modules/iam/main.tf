@@ -29,6 +29,27 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+# Secrets Manager access for External Secrets Operator
+resource "aws_iam_role_policy" "secrets_manager" {
+  name = "secrets-manager"
+  role = aws_iam_role.ec2.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret",
+          "secretsmanager:ListSecrets"
+        ]
+        Resource = "arn:aws:secretsmanager:eu-central-1:658424926455:secret:aws-platform-demo/*"
+      }
+    ]
+  })
+}
+
 # CloudWatch Logs access
 resource "aws_iam_role_policy" "cloudwatch_logs" {
   name = "cloudwatch-logs"
