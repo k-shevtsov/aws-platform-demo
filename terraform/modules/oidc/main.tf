@@ -103,7 +103,10 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
           "dynamodb:DeleteItem",
           "dynamodb:DescribeTable",
           "dynamodb:CreateTable",
-          "dynamodb:TagResource"
+          "dynamodb:TagResource",
+          "dynamodb:DescribeContinuousBackups",
+          "dynamodb:ListTagsOfResource",
+          "dynamodb:DescribeTimeToLive"
         ]
         Resource = "*"
       }
