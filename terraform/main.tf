@@ -113,3 +113,11 @@ resource "aws_secretsmanager_secret" "demo_app" {
     ManagedBy   = "terraform"
   }
 }
+
+# ── AWS Config Rules (disabled in demo, ~$9/month to enable) ─
+module "config" {
+  source       = "./modules/config"
+  project_name = var.project_name
+  environment  = var.environment
+  config_enabled = false  # set true + config_s3_bucket to activate
+}
