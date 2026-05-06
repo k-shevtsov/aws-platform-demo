@@ -1,0 +1,13 @@
+env:
+  - name: AWS_REGION
+    value: eu-central-1
+
+config:
+  outputs: |
+    [OUTPUT]
+        Name cloudwatch_logs
+        Match *
+        region eu-central-1
+        log_group_name /aws-platform-demo/k3s/pods
+        log_stream_prefix fluent-bit-
+        auto_create_group false

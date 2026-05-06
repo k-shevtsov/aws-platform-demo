@@ -106,7 +106,16 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
           "dynamodb:TagResource",
           "dynamodb:DescribeContinuousBackups",
           "dynamodb:ListTagsOfResource",
-          "dynamodb:DescribeTimeToLive"
+          "dynamodb:DescribeTimeToLive",
+          # CloudWatch
+          "logs:CreateLogGroup",
+          "logs:DeleteLogGroup",
+          "logs:DescribeLogGroups",
+          "logs:ListTagsLogGroup",
+          "logs:PutRetentionPolicy",
+          "logs:TagLogGroup",
+          "logs:TagResource",
+          "logs:ListTagsForResource"
         ]
         Resource = "*"
       }

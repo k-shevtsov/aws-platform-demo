@@ -78,3 +78,26 @@ module "oidc" {
   github_org   = "k-shevtsov"
   github_repo  = "aws-platform-demo"
 }
+
+# ── CloudWatch Log Groups ────────────────────────────────────
+resource "aws_cloudwatch_log_group" "k3s_pods" {
+  name              = "/aws-platform-demo/k3s/pods"
+  retention_in_days = 7
+
+  tags = {
+    Name        = "${var.project_name}-k3s-pods"
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "k3s_system" {
+  name              = "/aws-platform-demo/k3s/system"
+  retention_in_days = 7
+
+  tags = {
+    Name        = "${var.project_name}-k3s-system"
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
