@@ -1,6 +1,5 @@
 version: 3
 automerge: false
-delete_source_branch_on_merge: false
 projects:
   - name: aws-platform-demo
     dir: terraform
@@ -9,9 +8,5 @@ projects:
     autoplan:
       when_modified:
         - "*.tf"
-        - "*.tfvars"
-        - "../*.tf"
         - "modules/**/*.tf"
       enabled: true
-    apply_requirements:
-      - approved
