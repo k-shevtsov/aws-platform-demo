@@ -12,6 +12,8 @@
 A cloud platform demo that provisions production-grade AWS infrastructure from scratch using Terraform modules, deploys k3s on EC2 Free Tier, and integrates a full observability and secrets management stack — all without long-lived AWS credentials.
 
 ## Architecture
+
+```
 Terraform (local/CI) → AWS eu-central-1
 ├── VPC (10.0.0.0/16)
 │   ├── Public Subnet (10.0.1.0/24)
@@ -37,6 +39,7 @@ Terraform (local/CI) → AWS eu-central-1
 ├── demo-app:v1.0.0 ← pulled from ECR
 ├── Fluent Bit DaemonSet → CloudWatch Logs
 └── External Secrets Operator → Secrets Manager
+```
 
 ## Stack
 
