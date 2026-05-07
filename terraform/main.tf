@@ -116,10 +116,11 @@ resource "aws_secretsmanager_secret" "demo_app" {
 
 # ── AWS Config Rules (disabled in demo, ~$9/month to enable) ─
 module "config" {
-  source       = "./modules/config"
-  project_name = var.project_name
-  environment  = var.environment
-  config_enabled = false  # set true + config_s3_bucket to activate
+  source            = "./modules/config"
+  project_name      = var.project_name
+  environment       = var.environment
+  config_enabled    = true
+  config_s3_bucket  = "aws-platform-demo-config-658424926455"
 }
 
 # ── Karpenter (disabled in demo, EC2 costs apply) ────────────
@@ -129,4 +130,12 @@ module "karpenter" {
   karpenter_enabled  = false  # set true to activate node autoprovisioning
   oidc_provider_arn  = module.oidc.provider_arn
   oidc_provider      = "token.actions.githubusercontent.com"
+}
+
+# ── CloudTrail ───────────────────────────────────────────────
+module "cloudtrail" {
+  source             = "./modules/cloudtrail"
+  project_name       = var.project_name
+  account_id         = "658424926455"
+  cloudtrail_enabled = true
 }

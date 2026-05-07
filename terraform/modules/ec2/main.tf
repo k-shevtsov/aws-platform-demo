@@ -37,6 +37,7 @@ resource "aws_instance" "main" {
   root_block_device {
     volume_size = 20
     volume_type = "gp3"
+    encrypted   = true
   }
 
   user_data = base64encode(templatefile("${path.module}/user-data.sh", {

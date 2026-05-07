@@ -1,40 +1,38 @@
 # ──────────────────────────────────────────────────────────────
-# AWS Config Rules — Security Compliance
-#
-# NOTE: AWS Config is DISABLED in this demo to stay within
-# Free Tier. Estimated cost: ~$9/month (10 rules × ~100 evals/day).
-#
-# To enable: set var.config_enabled = true
-# All rules are production-ready and follow CIS AWS Benchmark.
+# AWS Config Rules — Security Compliance (CIS AWS Benchmark)
+# Enabled: set var.config_enabled = true
+# Cost: ~$9/month (6 rules × ~100 evaluations/day)
 # ──────────────────────────────────────────────────────────────
 
-# Config Recorder (required for all rules)
-resource "aws_config_configuration_recorder" "main" {
-  count = var.config_enabled ? 1 : 0
-  name  = "${var.project_name}-recorder"
+# S3 bucket policy for Config delivery
+resource "aws_s3_bucket_policy" "config" {
+  count  = var.config_enabled ? 1 : 0
+  bucket = var.config_s3_bucket
 
-  role_arn = aws_iam_role.config[0].arn
-
-  recording_group {
-    all_supported                 = true
-    include_global_resource_types = true
-  }
-}
-
-resource "aws_config_delivery_channel" "main" {
-  count          = var.config_enabled ? 1 : 0
-  name           = "${var.project_name}-delivery"
-  s3_bucket_name = var.config_s3_bucket
-
-  depends_on = [aws_config_configuration_recorder.main]
-}
-
-resource "aws_config_configuration_recorder_status" "main" {
-  count      = var.config_enabled ? 1 : 0
-  name       = aws_config_configuration_recorder.main[0].name
-  is_enabled = true
-
-  depends_on = [aws_config_delivery_channel.main]
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AWSConfigBucketPermissionsCheck"
+        Effect = "Allow"
+        Principal = { Service = "config.amazonaws.com" }
+        Action   = "s3:GetBucketAcl"
+        Resource = "arn:aws:s3:::${var.config_s3_bucket}"
+      },
+      {
+        Sid    = "AWSConfigBucketDelivery"
+        Effect = "Allow"
+        Principal = { Service = "config.amazonaws.com" }
+        Action   = "s3:PutObject"
+        Resource = "arn:aws:s3:::${var.config_s3_bucket}/AWSLogs/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
+        }
+      }
+    ]
+  })
 }
 
 # IAM Role for Config
@@ -50,12 +48,51 @@ resource "aws_iam_role" "config" {
       Principal = { Service = "config.amazonaws.com" }
     }]
   })
+
+  tags = {
+    Name      = "${var.project_name}-config-role"
+    ManagedBy = "terraform"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "config" {
   count      = var.config_enabled ? 1 : 0
   role       = aws_iam_role.config[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+}
+
+# Config Recorder
+resource "aws_config_configuration_recorder" "main" {
+  count    = var.config_enabled ? 1 : 0
+  name     = "${var.project_name}-recorder"
+  role_arn = aws_iam_role.config[0].arn
+
+  recording_group {
+    all_supported                 = true
+    include_global_resource_types = true
+  }
+}
+
+# Delivery Channel
+resource "aws_config_delivery_channel" "main" {
+  count          = var.config_enabled ? 1 : 0
+  name           = "${var.project_name}-delivery"
+  s3_bucket_name = var.config_s3_bucket
+
+  snapshot_delivery_properties {
+    delivery_frequency = "Six_Hours"
+  }
+
+  depends_on = [aws_config_configuration_recorder.main]
+}
+
+# Enable Recorder
+resource "aws_config_configuration_recorder_status" "main" {
+  count      = var.config_enabled ? 1 : 0
+  name       = aws_config_configuration_recorder.main[0].name
+  is_enabled = true
+
+  depends_on = [aws_config_delivery_channel.main]
 }
 
 # ── Rule 1: No unrestricted SSH (CIS 4.1) ───────────────────

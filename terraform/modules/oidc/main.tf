@@ -124,7 +124,22 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
           "secretsmanager:ListSecrets",
           "secretsmanager:PutSecretValue",
           "secretsmanager:TagResource",
-          "secretsmanager:GetResourcePolicy"
+          "secretsmanager:GetResourcePolicy",
+          # Config
+          "config:*",
+          "s3:GetBucketAcl",
+          "s3:PutBucketPolicy",
+          "s3:GetBucketPolicy",
+          # CloudTrail
+          "cloudtrail:*",
+          "s3:CreateBucket",
+          "s3:DeleteBucket",
+          "s3:GetLifecycleConfiguration",
+          "s3:PutLifecycleConfiguration",
+          "s3:GetBucketLocation",
+          "s3:ListBucket",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:GetBucketPublicAccessBlock"
         ]
         Resource = "*"
       }

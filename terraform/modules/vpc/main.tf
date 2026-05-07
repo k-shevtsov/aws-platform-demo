@@ -64,13 +64,14 @@ resource "aws_security_group" "main" {
   description = "Security group for ${var.project_name}"
   vpc_id      = aws_vpc.main.id
 
-  # SSH
+  # SSH — backup access, SSM is primary
+  # Production: restrict to VPN CIDR or remove entirely
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.ssh_allowed_cidr]
-    description = "SSH access"
+    description = "SSH backup access (primary: SSM Session Manager)"
   }
 
   # k3s API server
