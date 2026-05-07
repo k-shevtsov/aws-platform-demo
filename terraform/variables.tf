@@ -45,3 +45,9 @@ variable "ssh_public_key" {
   type        = string
   default     = ""
 }
+
+variable "demo_tag" {
+  description = "Demo tag for Atlantis testing"
+  type        = string
+  default     = "atlantis-test"
+}
