@@ -34,7 +34,7 @@ spec:
       serviceAccountName: atlantis
       containers:
         - name: atlantis
-          image: ghcr.io/runatlantis/atlantis:v0.31.0
+          image: ghcr.io/runatlantis/atlantis:v0.35.0
           ports:
             - containerPort: 4141
           args:
