@@ -74,6 +74,10 @@ spec:
                   key: aws-secret-access-key
             - name: TF_VAR_ssh_public_key
               value: "placeholder"
+            - name: ATLANTIS_TF_DOWNLOAD
+              value: "false"
+            - name: ATLANTIS_DEFAULT_TF_VERSION
+              value: "v1.11.4"
           volumeMounts:
             - name: config
               mountPath: /config

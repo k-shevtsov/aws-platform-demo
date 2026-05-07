@@ -70,5 +70,5 @@ jobs:
             })
 
       - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
+        if: steps.plan.outcome == 'failure' && steps.plan.outputs.exitcode == '1'
         run: exit 1
