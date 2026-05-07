@@ -1,0 +1,41 @@
+# EC2NodeClass defines the EC2-specific configuration for nodes
+# provisioned by Karpenter.
+#
+# NOTE: Disabled in demo — requires Karpenter controller running.
+# Apply after: helm install karpenter (see README.md)
+
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  # AMI family — Karpenter selects latest Ubuntu EKS-optimized AMI
+  amiSelectorTerms:
+    - alias: ubuntu@latest
+
+  # Use same subnet as existing infrastructure
+  subnetSelectorTerms:
+    - tags:
+        Name: "aws-platform-demo-public-subnet"
+
+  # Use same security group
+  securityGroupSelectorTerms:
+    - tags:
+        Name: "aws-platform-demo-sg"
+
+  # IAM instance profile
+  instanceProfile: "aws-platform-demo-ec2-profile"
+
+  # Block device mapping — gp3 for performance
+  blockDeviceMappings:
+    - deviceName: /dev/sda1
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        encrypted: true
+
+  # User data — install k3s agent and join cluster
+  userData: |
+    #!/bin/bash
+    curl -sfL https://get.k3s.io | K3S_URL=https://${CLUSTER_ENDPOINT}:6443 \
+      K3S_TOKEN=${NODE_TOKEN} sh -

@@ -121,3 +121,12 @@ module "config" {
   environment  = var.environment
   config_enabled = false  # set true + config_s3_bucket to activate
 }
+
+# ── Karpenter (disabled in demo, EC2 costs apply) ────────────
+module "karpenter" {
+  source             = "./modules/karpenter"
+  project_name       = var.project_name
+  karpenter_enabled  = false  # set true to activate node autoprovisioning
+  oidc_provider_arn  = module.oidc.provider_arn
+  oidc_provider      = "token.actions.githubusercontent.com"
+}

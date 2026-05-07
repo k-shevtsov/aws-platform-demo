@@ -1,0 +1,57 @@
+# NodePool defines constraints for nodes Karpenter can provision.
+#
+# NOTE: Disabled in demo — requires Karpenter controller running.
+# Apply after: kubectl apply -f karpenter/ec2nodeclass.yaml
+
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    metadata:
+      labels:
+        managed-by: karpenter
+        project: aws-platform-demo
+
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+
+      # Instance requirements — prefer Spot, fallback to On-Demand
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+
+        # Instance families — cost-optimized for demo workloads
+        - key: karpenter.k8s.aws/instance-family
+          operator: In
+          values: ["t3", "t3a", "m5", "m5a"]
+
+        # Instance sizes — small to medium
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: ["small", "medium", "large"]
+
+        # Architecture
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+
+        # Region
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values: ["eu-central-1a"]
+
+  # Resource limits — prevent runaway scaling
+  limits:
+    cpu: "4"
+    memory: 8Gi
+
+  # Disruption policy — consolidate nodes when underutilized
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s
