@@ -34,6 +34,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::658424926455:role/aws-platform-demo-github-actions-role
           aws-region: eu-central-1
+          role-duration-seconds: 3600
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
