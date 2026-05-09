@@ -71,7 +71,7 @@ GitHub Actions → sts:AssumeRoleWithWebIdentity → temporary credentials (2h)
 No `AWS_ACCESS_KEY_ID` or `AWS_SECRET_ACCESS_KEY` in GitHub Secrets.
 
 **Secrets never hardcoded** — AWS Secrets Manager + External Secrets Operator:
-AWS Secrets Manager → ESO ClusterSecretStore → Kubernetes Secret (auto-synced 1h)
+AWS Secrets Manager → ESO ClusterSecretStore → Kubernetes Secret (auto-sync 1h)
 
 **GitOps for infrastructure** — Atlantis automates Terraform via PR:
 PR opened → Atlantis webhook → terraform plan → PR comment
