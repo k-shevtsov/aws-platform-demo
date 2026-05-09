@@ -56,6 +56,10 @@ module "ec2" {
 # DynamoDB table for Terraform state locking
 resource "aws_dynamodb_table" "terraform_lock" {
   name         = "${var.project_name}-tfstate-lock"
+
+  lifecycle {
+    prevent_destroy = true
+  }
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
