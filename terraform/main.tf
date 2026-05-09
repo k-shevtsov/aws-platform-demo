@@ -102,7 +102,6 @@ resource "aws_cloudwatch_log_group" "k3s_system" {
   }
 }
 
-}
 
 # ── AWS Config Rules (disabled in demo, ~$9/month to enable) ─
 module "config" {
