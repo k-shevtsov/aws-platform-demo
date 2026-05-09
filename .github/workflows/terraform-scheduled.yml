@@ -2,15 +2,19 @@ name: Terraform Scheduled Management
 
 on:
   schedule:
+    # Stop EC2 every day at 22:00 UTC
     - cron: '0 22 * * *'
+    # Start EC2 every weekday at 07:00 UTC
     - cron: '0 7 * * 1-5'
   workflow_dispatch:
     inputs:
       action:
-        description: "Terraform action to run"
+        description: "Action to run"
         required: true
         type: choice
         options:
+          - start
+          - stop
           - apply
           - destroy
 
@@ -51,10 +55,25 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "action=${{ github.event.inputs.action }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.schedule }}" = "0 22 * * *" ]; then
-            echo "action=destroy" >> $GITHUB_OUTPUT
+            echo "action=stop" >> $GITHUB_OUTPUT
           else
-            echo "action=apply" >> $GITHUB_OUTPUT
+            echo "action=start" >> $GITHUB_OUTPUT
           fi
+
+      - name: EC2 Stop
+        if: steps.action.outputs.action == 'stop'
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances             --filters "Name=tag:Name,Values=aws-platform-demo-k3s"             --query 'Reservations[0].Instances[0].InstanceId'             --output text --region eu-central-1)
+          aws ec2 stop-instances --instance-ids $INSTANCE_ID --region eu-central-1
+          echo "EC2 $INSTANCE_ID stopped"
+
+      - name: EC2 Start
+        if: steps.action.outputs.action == 'start'
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances             --filters "Name=tag:Name,Values=aws-platform-demo-k3s"             --query 'Reservations[0].Instances[0].InstanceId'             --output text --region eu-central-1)
+          aws ec2 start-instances --instance-ids $INSTANCE_ID --region eu-central-1
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region eu-central-1
+          echo "EC2 $INSTANCE_ID started"
 
       - name: Terraform Apply
         if: steps.action.outputs.action == 'apply'

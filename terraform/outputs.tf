@@ -38,7 +38,3 @@ output "github_actions_role_arn" {
   value       = module.oidc.role_arn
 }
 
-output "secret_arn" {
-  description = "Secrets Manager secret ARN for ESO"
-  value       = aws_secretsmanager_secret.demo_app.arn
-}

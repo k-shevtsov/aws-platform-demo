@@ -102,16 +102,6 @@ resource "aws_cloudwatch_log_group" "k3s_system" {
   }
 }
 
-# ── Secrets Manager ──────────────────────────────────────────
-resource "aws_secretsmanager_secret" "demo_app" {
-  name        = "aws-platform-demo/demo-app/config"
-  description = "Demo app configuration — managed by ESO"
-
-  tags = {
-    Name        = "${var.project_name}-demo-app-config"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-  }
 }
 
 # ── AWS Config Rules (disabled in demo, ~$9/month to enable) ─
