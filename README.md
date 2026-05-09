@@ -14,36 +14,23 @@ A cloud platform demo that provisions production-grade AWS infrastructure from s
 
 ## Architecture
 
-Terraform (local/CI) → AWS eu-central-1
-├── VPC (10.0.0.0/16)
-│   ├── Public Subnet (10.0.1.0/24)
-│   ├── Internet Gateway + Route Table
-│   ├── Security Group (SSH backup, HTTP, HTTPS, k3s API, NodePort)
-│   └── Elastic IP (static, survives EC2 recreation)
-├── IAM
-│   ├── EC2 Role (ECR + SSM + CloudWatch + Secrets Manager)
-│   ├── Instance Profile
-│   └── GitHub Actions OIDC Role (AdministratorAccess, zero long-lived credentials)
-├── ECR (aws-platform-demo)
-│   └── Lifecycle policy: keep last 10 images, scan on push
-├── S3 (Terraform state)
-│   └── DynamoDB (state locking + encryption, prevent_destroy)
-├── Secrets Manager
-│   ├── aws-platform-demo/demo-app/config
-│   └── aws-platform-demo/atlantis/secrets
-├── CloudTrail
-│   └── S3 bucket (90-day retention)
-├── AWS Config (6 CIS Benchmark rules)
-│   ├── no-unrestricted-ssh, s3-no-public-access
-│   ├── ebs-encrypted, iam-no-root-access-key
-│   ├── mfa-enabled-root, cloudtrail-enabled
-└── EC2 t3.small
-├── Ubuntu 24.04 LTS + 2GB swap
-├── k3s v1.35.4 (TLS SAN for stable kubeconfig)
-├── demo-app:v1.0.0 ← pulled from ECR
-├── Fluent Bit DaemonSet → CloudWatch Logs
-├── External Secrets Operator → Secrets Manager
-└── Atlantis → GitHub PR automation
+```
+Terraform (local/CI) -> AWS eu-central-1
+
+  Network:    VPC + Subnet + IGW + SG + Elastic IP
+  IAM:        EC2 Role + OIDC Role (zero long-lived credentials)
+  Registry:   ECR (scan on push, lifecycle policy)
+  State:      S3 + DynamoDB (locking, encryption, prevent_destroy)
+  Secrets:    Secrets Manager (demo-app/config, atlantis/secrets)
+  Audit:      CloudTrail (S3, 90-day retention)
+  Compliance: AWS Config (6 CIS Benchmark rules)
+
+  EC2 t3.small / Ubuntu 24.04 / k3s v1.35.4
+    demo-app:v1.0.0    ECR image, NodePort 30080
+    Fluent Bit         Pod logs to CloudWatch
+    ESO                Secrets Manager to k8s Secret
+    Atlantis v0.35.0   Terraform GitOps via PR comments
+```
 
 ## Stack
 
