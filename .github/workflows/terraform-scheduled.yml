@@ -64,16 +64,27 @@ jobs:
         if: steps.action.outputs.action == 'stop'
         run: |
           INSTANCE_ID=$(aws ec2 describe-instances             --filters "Name=tag:Name,Values=aws-platform-demo-k3s"             --query 'Reservations[0].Instances[0].InstanceId'             --output text --region eu-central-1)
-          aws ec2 stop-instances --instance-ids $INSTANCE_ID --region eu-central-1
-          echo "EC2 $INSTANCE_ID stopped"
+          STATE=$(aws ec2 describe-instances             --instance-ids $INSTANCE_ID             --query 'Reservations[0].Instances[0].State.Name'             --output text --region eu-central-1)
+          if [ "$STATE" = "running" ]; then
+            aws ec2 stop-instances --instance-ids $INSTANCE_ID --region eu-central-1
+            aws ec2 wait instance-stopped --instance-ids $INSTANCE_ID --region eu-central-1
+            echo "EC2 $INSTANCE_ID stopped"
+          else
+            echo "EC2 $INSTANCE_ID already in state: $STATE, skipping"
+          fi
 
       - name: EC2 Start
         if: steps.action.outputs.action == 'start'
         run: |
           INSTANCE_ID=$(aws ec2 describe-instances             --filters "Name=tag:Name,Values=aws-platform-demo-k3s"             --query 'Reservations[0].Instances[0].InstanceId'             --output text --region eu-central-1)
-          aws ec2 start-instances --instance-ids $INSTANCE_ID --region eu-central-1
-          aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region eu-central-1
-          echo "EC2 $INSTANCE_ID started"
+          STATE=$(aws ec2 describe-instances             --instance-ids $INSTANCE_ID             --query 'Reservations[0].Instances[0].State.Name'             --output text --region eu-central-1)
+          if [ "$STATE" = "stopped" ]; then
+            aws ec2 start-instances --instance-ids $INSTANCE_ID --region eu-central-1
+            aws ec2 wait instance-running --instance-ids $INSTANCE_ID --region eu-central-1
+            echo "EC2 $INSTANCE_ID started"
+          else
+            echo "EC2 $INSTANCE_ID already in state: $STATE, skipping"
+          fi
 
       - name: Terraform Apply
         if: steps.action.outputs.action == 'apply'
